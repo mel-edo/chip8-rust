@@ -7,7 +7,7 @@ fn main() {
 
     Cpu::load_rom(&mut cpu, "c8games/PONG");
 
-    for _ in 0..4 {
+    for _ in 0..10 {
         Cpu::cycle(&mut cpu);
     };
 }

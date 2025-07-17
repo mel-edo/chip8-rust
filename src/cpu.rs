@@ -52,8 +52,24 @@ impl Cpu {
         // increment program counter by 2
         self.pc += 2;
 
-        // decode the opcode
-        // execute the instruction
+        // If pc > 4096, it will go out of memory bounds
+        if self.pc > 4095 {  // As 4095 and 4096 will be 2 byte opcode
+            panic!("pc went out of memory bounds");
+        };
+
+        // decode the opcode and execute the instruction
+        match self.opcode & 0xF000 {
+            0x1000 => self.op_1nnn(),
+            0x2000 => self.op_2nnn(),
+            0x3000 => self.op_3xkk(),
+            0x4000 => self.op_4xkk(),
+            0x5000 => self.op_5xy0(),
+            0x6000 => self.op_6xkk(),
+            0x7000 => self.op_7xkk(),
+            0x9000 => self.op_9xy0(),
+            0xa000 => self.op_annn(),
+            _ => println!("opcode not covered yet: {:#06x}", self.opcode),
+        }
         
         // update timers if needed(decrement both timers if they are > 0)
         if self.sound_timer > 0 {
@@ -63,6 +79,72 @@ impl Cpu {
         };
 
         Ok(())
+    }
+
+    fn op_1nnn(&mut self) {
+        // jumps pc to nnn
+        let nnn: u16 = self.opcode & 0x0FFF;
+        self.pc = nnn as usize;
+    }
+
+    fn op_2nnn(&mut self) {
+        //
+    }
+
+    fn op_3xkk(&mut self) {
+        // skip next instruction if Vx == kk
+        let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
+        let kk: u8 = (self.opcode & 0x00FF) as u8;
+        if self.v[x] == kk {
+            self.pc += 2;
+        } 
+    }
+
+    fn op_4xkk(&mut self) {
+        // skip next instruction if Vx != kk
+        let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
+        let kk: u8 = (self.opcode & 0x00FF) as u8;
+        if self.v[x] != kk {
+            self.pc += 2;
+        } 
+    }
+
+    fn op_5xy0(&mut self) {
+        // skip next instruction if Vx == Vy
+        let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
+        let y: usize = ((self.opcode & 0x00F0) >> 4) as usize;
+        if self.v[x] == self.v[y] {
+            self.pc += 2;
+        } 
+    }
+
+    fn op_6xkk(&mut self) {
+        // load kk into V[x]
+        let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
+        let kk: u8 = (self.opcode & 0x00FF) as u8;
+        self.v[x] = kk;
+    }
+
+    fn op_7xkk(&mut self) {
+        // add kk to existing value of V[x]
+        let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
+        let kk: u8 = (self.opcode & 0x00FF) as u8;
+        self.v[x] += kk;
+    }
+
+    fn op_9xy0(&mut self) {
+        // skip next instruction if Vx != Vy
+        let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
+        let y: usize = ((self.opcode & 0x00F0) >> 4) as usize;
+        if self.v[x] != self.v[y] {
+            self.pc += 2;
+        };
+    }
+
+    fn op_annn(&mut self) {
+        // set i to nnn
+        let nnn: u16 = self.opcode & 0x0FFF;
+        self.i = nnn;
     }
 }
 
