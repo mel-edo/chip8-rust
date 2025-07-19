@@ -4,7 +4,7 @@ use cpu::Cpu;
 use sdl2::{self, event::Event, keyboard::Keycode};
 use std::time::Duration;
 
-const SCALE: u32 = 10;
+const SCALE: u32 = 15;
 
 fn draw_screen(gfx: &[u8; 64*32], canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
     canvas.set_draw_color(sdl2::pixels::Color::BLACK);
@@ -14,7 +14,7 @@ fn draw_screen(gfx: &[u8; 64*32], canvas: &mut sdl2::render::Canvas<sdl2::video:
     for y in 0..32 {
         for x in 0..64 {
             if gfx[y * 64 + x] == 1 {
-                let rect = sdl2::rect::Rect::new(x as i32, y as i32, SCALE, SCALE);
+                let rect = sdl2::rect::Rect::new((x as u32 * SCALE) as i32, (y as u32 * SCALE) as i32, SCALE, SCALE);
                 canvas.fill_rect(rect).unwrap();
             }
         }
@@ -54,7 +54,7 @@ fn main() {
 
     let mut cpu = Cpu::new();
 
-    cpu.load_rom("c8games/PONG").unwrap();
+    cpu.load_rom("c8games/PONG2").unwrap();
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 

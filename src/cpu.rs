@@ -169,7 +169,7 @@ impl Cpu {
         // add kk to existing value of V[x]
         let x: usize = ((self.opcode & 0x0F00) >> 8) as usize;
         let kk: u8 = (self.opcode & 0x00FF) as u8;
-        self.v[x] += kk;
+        self.v[x] = self.v[x].wrapping_add(kk);
         self.pc += 2;
     }
 
@@ -318,12 +318,11 @@ impl Cpu {
                 self.pc += 2;
             },
             0x000A => {
-                for i in 0u8..=15 {
-                    if self.keypad[i as usize] == 1 {
-                        self.v[x] = i;
-                        self.pc += 2;
-                        break;
-                    }
+                if let Some(pressed_key) = self.keypad.iter().position(|&k| k == 1) {
+                    self.v[x] = pressed_key as u8;
+                    self.pc += 2;
+                } else {
+                    return;
                 }
             },
             0x0005 => {
