@@ -91,7 +91,7 @@ fn main() {
 
     let mut cpu = Cpu::new();
 
-    cpu.load_rom("c8games/INVADERS").unwrap();
+    cpu.load_rom("rom/pong.ch8").unwrap();
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
@@ -113,7 +113,7 @@ fn main() {
                 _ => {},
             }
         }
-
+        
         for _ in 0..INSTRUCTIONS_PER_FRAME {
             cpu.cycle().unwrap();
         }
