@@ -2,6 +2,7 @@ mod cpu;
 
 use cpu::Cpu;
 use sdl2::{self, event::Event, keyboard::Keycode};
+use std::env;
 
 const SCALE: u32 = 15;
 const INSTRUCTIONS_PER_FRAME: usize = 10;
@@ -91,7 +92,8 @@ fn main() {
 
     let mut cpu = Cpu::new();
 
-    cpu.load_rom("rom/pong.ch8").unwrap();
+    let rom_path = env::args().nth(1).unwrap_or("rom/pong.ch8".to_string());
+    cpu.load_rom(&rom_path).unwrap();
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
