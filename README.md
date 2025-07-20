@@ -23,6 +23,14 @@ On Arch:
 sudo pacman -S sdl2
 ```
 
+### Installation
+
+```
+git clone https://github.com/mel-edo/chip8-rust.git
+cd chip8-rust
+cargo build --release
+```
+
 ### Usage
 
 You can find public domain games [here](https://www.zophar.net/pdroms/chip8/chip-8-games-pack.html)
@@ -37,3 +45,10 @@ If no path is provided, runs pong by default
 cargo run --release
 ```
 
+## Contributing
+
+Suggestions, fixes and improvments are welcome. Feel free to open an issue or a PR.
+
+## License
+
+This project is licensed under [GNU GPLv3](LICENSE)
