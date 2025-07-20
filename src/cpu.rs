@@ -83,13 +83,6 @@ impl Cpu {
             _ => println!("opcode not covered yet: {:#06x}", self.opcode),
         }
         
-        // update timers if needed(decrement both timers if they are > 0)
-        if self.sound_timer > 0 {
-            self.sound_timer -= 1;
-        } else if self.delay_timer > 0 {
-            self.delay_timer -= 1;
-        };
-
         Ok(())
     }
 
@@ -105,6 +98,7 @@ impl Cpu {
             0x000E => {
                 self.sp -= 1;
                 self.pc = self.stack[self.sp] as usize;
+                return;
             },
             _ => println!("opcode not covered yet: {:#06x}", self.opcode),
         }
@@ -119,7 +113,7 @@ impl Cpu {
     fn op_2nnn(&mut self) {
         // jump to subroutine at nnn
         let nnn = self.opcode & 0x0FFF;
-        self.stack[self.sp] = self.pc as u16;
+        self.stack[self.sp] = (self.pc + 2) as u16;
         self.sp += 1;
         self.pc = nnn as usize;
     }
@@ -390,8 +384,8 @@ pub struct Cpu {
     pc: usize,
     pub gfx: [u8; 64*32],
     pub draw_flag: bool,
-    sound_timer: u8,
-    delay_timer: u8,
+    pub sound_timer: u8,
+    pub delay_timer: u8,
     stack: [u16; 16],
     sp: usize,
     pub keypad: [u8; 16],
